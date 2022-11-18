@@ -12,8 +12,11 @@ import java.time.LocalDate;
 @EntityListeners(AuditingEntityListener.class)
 
 public class Ladok {
-    
+
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
     @NotBlank
     private String person_nr;
 
@@ -30,6 +33,14 @@ public class Ladok {
 
     @NotBlank
     private String status;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     public String getPerson_nr() {
         return person_nr;
