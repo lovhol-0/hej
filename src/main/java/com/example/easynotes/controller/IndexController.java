@@ -11,6 +11,6 @@ public class IndexController {
 
     @GetMapping
     public String sayHello() {
-        return "Index";
+        return "Index8";
     }
 }

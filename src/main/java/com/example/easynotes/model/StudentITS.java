@@ -12,22 +12,11 @@ import javax.validation.constraints.NotBlank;
 public class StudentITS {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
     @NotBlank
     private String student_id;
 
     @NotBlank
     private String person_nr;
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
 
     public String getStudent_id() {
         return student_id;
