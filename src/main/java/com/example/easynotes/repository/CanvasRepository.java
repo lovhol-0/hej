@@ -6,6 +6,6 @@ import org.springframework.stereotype.Repository;
 
 
 @Repository
-public interface CanvasRepository extends JpaRepository<Canvas, String> {
+public interface CanvasRepository extends JpaRepository<Canvas, Long> {
 
 }
