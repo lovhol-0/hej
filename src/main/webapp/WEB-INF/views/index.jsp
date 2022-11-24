@@ -25,10 +25,11 @@
 	});
 	
 	var url = "http://localhost:8085/canvas/";
-	var url2 = "http://localhost:8085/canvas/{kurskod}";
+	var url2 = "http://localhost:8085/ladok/";
 	$(function() {
-	    canvasList();
+	    
 		kurskodList();
+		modifyCanvas();
 	    $('button[type=button]').click(function(e) {
 	        e.preventDefault();
 	        // alert($('form[name=canvasForm]').serialize());
@@ -39,7 +40,7 @@
 	            dataType: "text",
 	            success: function(response) {
 	                $("#success_id").show().fadeOut(5000);
-	                canvasList();
+	                modifyCanvas();
 	                $("input[type=text], textarea").val("");
 	            },
 	            error: function(jqXHR, textStatus, errorThrown) {
@@ -50,42 +51,73 @@
 	    });
 	});
 
-	function getModifyUppgifter() {
+	function setKurskod() {
 		var kurskod = document.getElementById("selectKurskod").value;
   		console.log(kurskod);
 		modifyUppgifter(kurskod);
+		modifyModul(kurskod);
+	};
+
+	function getKurskod() {
+		var kurskod = document.getElementById("selectKurskod").value;
+		console.log(kurskod);
+		return kurskod;
+	}
+
+	function setUppgift() {
+		var uppgift = document.getElementById("selectUppgift").value;
+		var kurskod = getKurskod();
+  		console.log(kurskod, uppgift);
+		modifyCanvas(kurskod, uppgift);
+	};
+
+	function modifyModul(kurskod) {
+		var kurskod = document.getElementById("selectKurskod").value;
+		var alreadyUsed = [];
+		$.ajax({
+	        type: "GET",
+	        url: url2 + "kurskod/" + kurskod,
+	        dataType: "json",
+	        success: function(response) {
+	            var td = '<td><select id="selectModul"><option value="" selected disabled hidden>-</option>';
+					$.each(response, function(key, ladok) {
+						if (alreadyUsed.includes(ladok.modul_kod)) {
+						} else {
+							alreadyUsed.push(ladok.modul_kod);
+							td += "<option>" + ladok.modul_kod + "</option>";
+						};
+	                	
+	            });
+
+	            td += '</select></td>';
+	            $("#modulTableContainer").html(td);
+	        }
+	    });
 	};
 
 	function modifyUppgifter(kurskod) {
+		var kurskod = document.getElementById("selectKurskod").value;
 		var alreadyUsed = [];
 		$.ajax({
 	        type: "GET",
 	        url: url + "kurskod/" + kurskod,
 	        dataType: "json",
 	        success: function(response) {
-	            var table = '<table id=example class=table table-striped table-bordered cellspacing=0 width=100%>' +
-	                '<thead> <tr> <th>Kurskod</th> <th>Uppgift i Canvas</tr> </thead>' +
-					'<tr> <td> <select id="selectKurskod" onchange="getModifyUppgifter()">';
-						
-	            $.each(response, function(key, canvas) {
-					if (alreadyUsed.includes(canvas.kurskod)) {
-					} else {
-						alreadyUsed.push(canvas.kurskod);
-						table += "<option>" + canvas.kurskod + "</option>";
-					};
-	            });
-
-				
-
-				table += '</select></td><td><select id="selectUppgift">';
+	            var td = '<td><select id="selectUppgift" onchange="setUppgift()"><option value="" selected disabled hidden>-</option>';
 					$.each(response, function(key, canvas) {
-	                table += "<option>" + canvas.uppgift + "</option>";
+						if (alreadyUsed.includes(canvas.uppgift)) {
+						} else {
+							alreadyUsed.push(canvas.uppgift);
+							td += "<option>" + canvas.uppgift + "</option>";
+						};
+	                	
 	            });
 
-	            table += '</select></td></tr></table>';
-	            $("#uppgiftTableContainer").html(table);
+	            td += '</select></td>';
+	            $("#uppgiftTableContainer").html(td);
 	        }
 	    });
+		
 	};
 
 	function kurskodList() {
@@ -96,57 +128,44 @@
 	        url: url,
 	        dataType: "json",
 	        success: function(response) {
-	            var table = '<table id=example class=table table-striped table-bordered cellspacing=0 width=100%>' +
-	                '<thead> <tr> <th>Kurskod</th> <th>Uppgift i Canvas</tr> </thead>' +
-					'<tr> <td> <select id="selectKurskod" onchange="getModifyUppgifter()">';
+	            var td = '<td><select id="selectKurskod" onchange="setKurskod()"><option value="" selected disabled hidden>-</option>';
 						
 	            $.each(response, function(key, canvas) {
 					if (alreadyUsed.includes(canvas.kurskod)) {
 					} else {
 						alreadyUsed.push(canvas.kurskod);
-						table += "<option>" + canvas.kurskod + "</option>";
+						td += "<option>" + canvas.kurskod + "</option>";
 					};
 	            });
-
 				
 
-				table += '</select></td><td><select id="selectUppgift">';
-					$.each(response, function(key, canvas) {
-	                table += "<option>" + canvas.uppgift + "</option>";
-	            });
-
-	            table += '</select></td></tr></table>';
-	            $("#kurskodTableContainer").html(table);
+	            td += '</select></td>';
+	            $("#kurskodTableContainer").html(td);
 	        }
 	    });
 	}
 
-	function canvasList() {
-	    var msg_data;
-	    $.ajax({
+	function modifyCanvas(kurskod, uppgift) {
+		console.log(kurskod, uppgift);
+		var alreadyUsed = [];
+		$.ajax({
 	        type: "GET",
-	        url: url,
+	        url: url + "list/" + kurskod + "/" + uppgift,
 	        dataType: "json",
 	        success: function(response) {
-	            var table = '<table id=example class=table table-striped table-bordered cellspacing=0 width=100%>' +
-	                '<thead> <tr> <th>Id</th> <th>Namn</th> <th>Grade</th> <th>Kurskod</th> <th>Edit</th> <th>Delete</th> </tr> </thead>' +
-	                '<tfoot> <tr> <th>Id</th> <th>Namn</th> <th>Grade</th> <th>Kurskod</th> <th>Edit</th> <th>Delete</th> </tr> </tfoot><tbody id="canvas-list">';
-	            $.each(response, function(key, canvas) {
-	                table += "<tr>" +
-	                    "<td>" + canvas.id + "</td>" +
-	                    "<td>" + canvas.namn + "</td>" +
-	                    "<td>" + canvas.grade + "</td>" +
-	                    "<td><select><option>" + canvas.kurskod + "</option></select></td>" +
-	                    "<td><a href='#' onclick='javascript:editCanvas(" + canvas.id + ");'>edit</a></td>" +
-	                    "<td><a href='#' onclick='javascript:deleteCanvas(" + canvas.id + ");'>delete</a></td>" +
-	                    "</tr>";
-
+	            var tdnamn = '';
+				var tdgrade = '';
+					$.each(response, function(key, canvas) {
+							tdnamn +=  "<tr><td>" + canvas.namn + "</td></tr>";
+							tdgrade +=  "<tr><td>" + canvas.grade + "</td></tr>";
+					
+	                	
 	            });
-	            table += '</table>';
-	            $("#tableContainer").html(table);
+	            $("#canvasNamnTableContainer").html(tdnamn);
+				$("#canvasGradeTableContainer").html(tdgrade);
 	        }
 	    });
-	}
+	};
 
 
 
@@ -237,8 +256,38 @@
 		</div> -->
 		<h1>Rapportera endast betyg</h1>
 		<p>Tre urvalsfält visas: Kurskod, Uppgift i Canvas och Modul i Ladok. Välj enligt det du vill rapportera.</p>
-		<div class="row" id="kurskodTableContainer"></div>
-		<div class="row" id="uppgiftTableContainer"></div>
+		<div class="row">
+			<table class=table table-striped table-bordered cellspacing=0 width=100%>
+				<thead> <tr> <th>Kurskod</th> <th>Uppgift i Canvas</th> <th>Modul i Ladok</th></tr> </thead>
+				<tr> 
+					<td id="kurskodTableContainer"></td>
+					<td id="uppgiftTableContainer"></td>
+					<td id="modulTableContainer"></td>
+				</tr> </table>
+		</div>
+		<div class="row">
+			<table class=table table-striped table-bordered cellspacing=0 width=100%>
+				<thead> <tr>
+					<th>Namn</th>
+					<th>Omdöme i Canvas</th>
+					<th>Betyg i Ladok</th>
+					<th>Examinationsdatum</th>
+					<th>Status</th>
+					<th>Information</th>
+				</tr> </thead>
+				<tr>
+					
+					<td id="canvasNamnTableContainer"></td>
+					<td id="canvasGradeTableContainer"></td>
+					<td id=""></td>
+					<td id=""></td>
+					<td id=""></td>
+					<td id=""></td>
+				</tr> 
+		</table>
+		</div>
+		<!-- <div class="row" id="kurskodTableContainer"></div>
+		<div class="row" id="uppgiftTableContainer"></div> -->
 		<!-- <div class="row" id="tableContainer"></div> -->
 	</div>
 </body>

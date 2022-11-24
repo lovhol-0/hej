@@ -8,4 +8,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface LadokRepository extends JpaRepository<Ladok, Long> {
 
+    Iterable<Ladok> findByKurskod(String kurskod);
+
 }

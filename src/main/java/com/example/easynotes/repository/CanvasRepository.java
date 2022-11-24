@@ -13,5 +13,6 @@ import org.springframework.stereotype.Repository;
 public interface CanvasRepository extends JpaRepository<Canvas, Long> {
 
     Iterable<Canvas> findByKurskod(String kurskod);
+    Iterable<Canvas> findByKurskodAndUppgift(String kurskod, String uppgift);
 
 }
