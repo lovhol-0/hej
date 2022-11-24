@@ -27,16 +27,16 @@
 	var url = "http://localhost:8085/canvas/";
 	var url2 = "http://localhost:8085/ladok/";
 	$(function() {
-	    
 		kurskodList();
-		modifyCanvas();
 	    $('button[type=button]').click(function(e) {
+			console.log($('form[name=ladokPostLove]').serialize());
+			console.log("hej")
 	        e.preventDefault();
 	        // alert($('form[name=canvasForm]').serialize());
 	        $.post({
 	            type: "POST",
-	            url: url,
-	            data: $('form[name=canvasForm]').serialize(),
+	            url: url2,
+	            data: $('form[name=ladokPost]').serialize(),
 	            dataType: "text",
 	            success: function(response) {
 	                $("#success_id").show().fadeOut(5000);
@@ -153,19 +153,35 @@
 	        url: url + "list/" + kurskod + "/" + uppgift,
 	        dataType: "json",
 	        success: function(response) {
-	            var tdnamn = '';
-				var tdgrade = '';
+	            var tdNamn = '';
+				var tdGrade = '';
+				var tdBetyg = '';
+				var tdDatum = '';
+				var tdStatus = '';
+				var tdInfo = '';
+				var tdKnapp = '';
 					$.each(response, function(key, canvas) {
-							tdnamn +=  "<tr><td>" + canvas.namn + "</td></tr>";
-							tdgrade +=  "<tr><td>" + canvas.grade + "</td></tr>";
-					
+						
+							tdNamn +=  "<tr><td>" + canvas.namn + "</td></tr>";
+							tdGrade +=  "<tr><td>" + canvas.grade + "</td></tr>";
+							tdBetyg +=  "<tr><td><select><option>" + canvas.grade + "</option></select></td></tr>";
+							tdDatum +=  "<tr><td><input type='date'></input></td></tr>";
+							tdStatus +=  "<tr><td></td></tr>";
+							tdInfo +=  "<tr><td></td></tr>";
+							tdKnapp += 	"<tr><td><button type='button' onclick='postLadok()'>Submit</button></td></tr>";	
 	                	
 	            });
-	            $("#canvasNamnTableContainer").html(tdnamn);
-				$("#canvasGradeTableContainer").html(tdgrade);
+	            $("#canvasNamnTableContainer").html(tdNamn);
+				$("#canvasGradeTableContainer").html(tdGrade);
+				$("#canvasBetygTableContainer").html(tdBetyg);
+				$("#canvasDatumTableContainer").html(tdDatum);
+				$("#canvasStatusTableContainer").html(tdStatus);
+				$("#canvasInfoTableContainer").html(tdInfo);
+				$("#canvasKnappTableContainer").html(tdKnapp);
 	        }
 	    });
 	};
+
 
 
 
@@ -265,7 +281,9 @@
 					<td id="modulTableContainer"></td>
 				</tr> </table>
 		</div>
+		<form name="ladokPostLove">
 		<div class="row">
+			
 			<table class=table table-striped table-bordered cellspacing=0 width=100%>
 				<thead> <tr>
 					<th>Namn</th>
@@ -279,13 +297,18 @@
 					
 					<td id="canvasNamnTableContainer"></td>
 					<td id="canvasGradeTableContainer"></td>
-					<td id=""></td>
-					<td id=""></td>
-					<td id=""></td>
-					<td id=""></td>
+					<td id="canvasBetygTableContainer"></td>
+					<td id="canvasDatumTableContainer"></td>
+					<td id="canvasStatusTableContainer"></td>
+					<td id="canvasInfoTableContainer"></td>
+					<td id="canvasKnappTableContainer"></td>
+				
 				</tr> 
 		</table>
+	
 		</div>
+		<button type='button' >Submit</button>
+	</form>
 		<!-- <div class="row" id="kurskodTableContainer"></div>
 		<div class="row" id="uppgiftTableContainer"></div> -->
 		<!-- <div class="row" id="tableContainer"></div> -->
