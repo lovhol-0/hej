@@ -25,6 +25,7 @@
 	});
 	
 	var url = "http://localhost:8085/canvas/";
+	var url2 = "http://localhost:8085/canvas/{kurskod}";
 	$(function() {
 	    canvasList();
 		kurskodList();
@@ -49,6 +50,44 @@
 	    });
 	});
 
+	function getModifyUppgifter() {
+		var kurskod = document.getElementById("selectKurskod").value;
+  		console.log(kurskod);
+		modifyUppgifter(kurskod);
+	};
+
+	function modifyUppgifter(kurskod) {
+		var alreadyUsed = [];
+		$.ajax({
+	        type: "GET",
+	        url: url + "kurskod/" + kurskod,
+	        dataType: "json",
+	        success: function(response) {
+	            var table = '<table id=example class=table table-striped table-bordered cellspacing=0 width=100%>' +
+	                '<thead> <tr> <th>Kurskod</th> <th>Uppgift i Canvas</tr> </thead>' +
+					'<tr> <td> <select id="selectKurskod" onchange="getModifyUppgifter()">';
+						
+	            $.each(response, function(key, canvas) {
+					if (alreadyUsed.includes(canvas.kurskod)) {
+					} else {
+						alreadyUsed.push(canvas.kurskod);
+						table += "<option>" + canvas.kurskod + "</option>";
+					};
+	            });
+
+				
+
+				table += '</select></td><td><select id="selectUppgift">';
+					$.each(response, function(key, canvas) {
+	                table += "<option>" + canvas.uppgift + "</option>";
+	            });
+
+	            table += '</select></td></tr></table>';
+	            $("#uppgiftTableContainer").html(table);
+	        }
+	    });
+	};
+
 	function kurskodList() {
 	    var msg_data;
 		var alreadyUsed = [];
@@ -59,7 +98,7 @@
 	        success: function(response) {
 	            var table = '<table id=example class=table table-striped table-bordered cellspacing=0 width=100%>' +
 	                '<thead> <tr> <th>Kurskod</th> <th>Uppgift i Canvas</tr> </thead>' +
-					'<tr> <td> <select id="select">';
+					'<tr> <td> <select id="selectKurskod" onchange="getModifyUppgifter()">';
 						
 	            $.each(response, function(key, canvas) {
 					if (alreadyUsed.includes(canvas.kurskod)) {
@@ -68,7 +107,10 @@
 						table += "<option>" + canvas.kurskod + "</option>";
 					};
 	            });
-				table += '</select><select>';
+
+				
+
+				table += '</select></td><td><select id="selectUppgift">';
 					$.each(response, function(key, canvas) {
 	                table += "<option>" + canvas.uppgift + "</option>";
 	            });
@@ -196,6 +238,7 @@
 		<h1>Rapportera endast betyg</h1>
 		<p>Tre urvalsfält visas: Kurskod, Uppgift i Canvas och Modul i Ladok. Välj enligt det du vill rapportera.</p>
 		<div class="row" id="kurskodTableContainer"></div>
+		<div class="row" id="uppgiftTableContainer"></div>
 		<!-- <div class="row" id="tableContainer"></div> -->
 	</div>
 </body>

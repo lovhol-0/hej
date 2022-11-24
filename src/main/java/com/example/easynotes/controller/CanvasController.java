@@ -51,6 +51,16 @@ public class CanvasController {
 		return ResponseEntity.ok().body(canvas.get());
 	}
 
+	/*---Get a product by kurskod---*/
+	@GetMapping("/canvas/kurskod/{kurskod}")
+	public ResponseEntity<List<Canvas>> getCanvasByKurskod (@PathVariable("kurskod") String kurskod) {
+		List<Canvas> list = new ArrayList<Canvas>();
+		Iterable<Canvas> canvas = canvasRepository.findByKurskod(kurskod);
+		canvas.forEach(e -> list.add(e));
+        System.out.println("uppgift page");
+		return ResponseEntity.ok().body(list);
+	}
+
 	/*---Update a product by id---*/
 	@PutMapping("/canvas/")
 	public ResponseEntity<Canvas> update(@ModelAttribute Canvas canvas) {
