@@ -19,10 +19,13 @@ public class Canvas {
     private String namn;
 
     @NotBlank
-    private String omdöme;
+    private String grade;
 
     @NotBlank
     private String kurskod;
+
+    @NotBlank
+    private String uppgift;
 
     public Long getId() {
         return id;
@@ -40,12 +43,12 @@ public class Canvas {
         this.namn = namn;
     }
 
-    public String getOmdöme() {
-        return omdöme;
+    public String getGrade() {
+        return grade;
     }
 
-    public void setOmdöme(String omdöme) {
-        this.omdöme = omdöme;
+    public void setGrade(String grade) {
+        this.grade = grade;
     }
 
     public String getKurskod() {
@@ -54,6 +57,14 @@ public class Canvas {
 
     public void setKurskod(String kurskod) {
         this.kurskod = kurskod;
+    }
+
+    public String getUppgift() {
+        return uppgift;
+    }
+
+    public void setUppgift(String uppgift) {
+        this.uppgift = uppgift;
     }
     
 }
