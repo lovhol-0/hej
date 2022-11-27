@@ -1,9 +1,11 @@
 <%@ page contentType="text/html; charset=UTF-8" %>
 <html>
 <head>
+	<link rel="stylesheet" href="styles.css">
 <!-- <meta charset="ISO-8859-1"> -->
 <!-- <meta charset="utf-8"> -->
 <title>Rapportera betyg</title>
+
 <link rel="stylesheet"
 	href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css">
 <script
@@ -28,7 +30,7 @@
 	var url2 = "http://localhost:8085/ladok/";
 	$(function() {
 		kurskodList();
-	    $('button[type=button]').click(function(e) {
+	    $('submit-button').click(function(e) {
 			console.log($('form[name=ladokPostLove]').serialize());
 			console.log("hej")
 	        e.preventDefault();
@@ -222,9 +224,16 @@
 </script>
 </head>
 <body>
-
+	<nav class="navbar-light">
+		<div class="container-fluid navbar-brand">
+			<div class="container">
+			<img src="images/ladoklogga.JPG" alt="Logo">
+			</div>
+		</div>
+	  </nav>
 	<div class="container">
-		
+	
+
 		<!-- <form class="form-horizontal mx-auto" name="canvasForm" method="post">
 			<strong>Canvas Form </strong>
 			<div class="form-group" id="idInput"></div>
@@ -270,10 +279,10 @@
 		<div class="alert alert-danger" id="error_id" style="display: none">
 			<strong>Danger!</strong> Something went wrong! Try again.
 		</div> -->
-		<h1>Rapportera endast betyg</h1>
+		<h2>Rapportera endast betyg</h2>
 		<p>Tre urvalsfält visas: Kurskod, Uppgift i Canvas och Modul i Ladok. Välj enligt det du vill rapportera.</p>
 		<div class="row">
-			<table class=table table-striped table-bordered cellspacing=0 width=100%>
+			<table class=table table-striped table-dark table-bordered cellspacing=0 width=100%>
 				<thead> <tr> <th>Kurskod</th> <th>Uppgift i Canvas</th> <th>Modul i Ladok</th></tr> </thead>
 				<tr> 
 					<td id="kurskodTableContainer"></td>
@@ -284,7 +293,7 @@
 		<form name="ladokPostLove">
 		<div class="row">
 			
-			<table class=table table-striped table-bordered cellspacing=0 width=100%>
+			<table class=table table-striped table-bordered table-dark cellspacing=0 width=100%>
 				<thead> <tr>
 					<th>Namn</th>
 					<th>Omdöme i Canvas</th>
@@ -307,11 +316,19 @@
 		</table>
 	
 		</div>
-		<button type='button' >Submit</button>
+		<button type="button" class="btn btn-primary btn-lg submit-button">Submit</button>
+	
+		
 	</form>
 		<!-- <div class="row" id="kurskodTableContainer"></div>
 		<div class="row" id="uppgiftTableContainer"></div> -->
 		<!-- <div class="row" id="tableContainer"></div> -->
 	</div>
+
+	<nav class="navbar fixed-bottom bg-light">
+		<div class="container-fluid">
+		  <p class="navbar-brand">Nya Coola Canvas</a>
+		</div>
+	  </nav>
 </body>
 </html>
