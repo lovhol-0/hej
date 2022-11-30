@@ -10,16 +10,15 @@ import org.springframework.web.bind.annotation.*;
 
 
 @RestController
-@RequestMapping("/api")
 public class EpokController {
 
     @Autowired
     EpokRepository epokRepository;
 
     @GetMapping("/epok/{kurskod}")
-    public Epok getEpokByKurskod(@PathVariable(value = "kurskod") String epokKurskod) {
-        return epokRepository.findById(epokKurskod)
-                .orElseThrow(() -> new ResourceNotFoundException("Epok", "kurskod", epokKurskod));
+    public Epok getEpokByKurskod(@PathVariable(value = "id") Long epokId) {
+        return epokRepository.findById(epokId)
+                .orElseThrow(() -> new ResourceNotFoundException("Epok", "id", epokId));
     }
 
 }

@@ -6,17 +6,17 @@ import javax.validation.constraints.NotBlank;
 
 
 @Entity
-@Table(name = "student_its")
+@Table(name = "its")
 @EntityListeners(AuditingEntityListener.class)
 
-public class StudentITS {
+public class Its {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @NotBlank
-    private String student_id;
+    private String studentid;
 
     @NotBlank
     private String person_nr;
@@ -29,12 +29,12 @@ public class StudentITS {
         this.id = id;
     }
 
-    public String getStudent_id() {
-        return student_id;
+    public String getStudentid() {
+        return studentid;
     }
 
-    public void setStudent_id(String student_id) {
-        this.student_id = student_id;
+    public void setStudentid(String studentid) {
+        this.studentid = studentid;
     }
 
     public String getPerson_nr() {

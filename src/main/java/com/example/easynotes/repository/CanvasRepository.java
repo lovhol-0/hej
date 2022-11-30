@@ -1,10 +1,6 @@
 package com.example.easynotes.repository;
 
 import com.example.easynotes.model.Canvas;
-
-import java.util.List;
-import java.util.Optional;
-
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

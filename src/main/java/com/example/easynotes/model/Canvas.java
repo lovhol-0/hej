@@ -27,6 +27,10 @@ public class Canvas {
     @NotBlank
     private String uppgift;
 
+    @NotBlank
+    private String studentid;
+
+    
     public Long getId() {
         return id;
     }
@@ -66,5 +70,14 @@ public class Canvas {
     public void setUppgift(String uppgift) {
         this.uppgift = uppgift;
     }
+
+    public String getStudentid() {
+        return studentid;
+    }
+
+    public void setStudentid(String studentid) {
+        this.studentid = studentid;
+    }
+
     
 }

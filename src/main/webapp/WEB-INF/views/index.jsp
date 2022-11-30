@@ -1,6 +1,40 @@
 <%@ page contentType="text/html; charset=UTF-8" %>
 <html>
 <head>
+	<style>
+		.table
+		{
+			display:table;
+			border-collapse:separate;
+			border-spacing:2px;
+		}
+		.thead
+		{
+			display:table-header-group;
+			color:white;
+			font-weight:bold;
+			background-color:grey;
+		}
+		.tbody
+		{
+			display:table-row-group;
+		}
+		.tr
+		{
+			display:table-row;
+		}
+		.td
+		{
+			display:table-cell;
+			border:1px solid black;
+			padding:1px;
+			width: 14%;
+		}
+		.tr.editing .td INPUT
+		{
+			width:100px;
+		}
+		</style>
 <!-- <meta charset="ISO-8859-1"> -->
 <!-- <meta charset="utf-8"> -->
 <title>Rapportera betyg</title>
@@ -26,6 +60,7 @@
 	
 	var url = "http://localhost:8085/canvas/";
 	var url2 = "http://localhost:8085/ladok/";
+	var url3 = "http://localhost:8085/its/studentid/";
 	$(function() {
 		kurskodList();
 	    $('button[type=button]').click(function(e) {
@@ -64,11 +99,17 @@
 		return kurskod;
 	}
 
+	function getModul_kod() {
+		var modul_kod = document.getElementById("selectModul").value;
+		console.log(modul_kod);
+		return modul_kod;
+	}
+
 	function setUppgift() {
 		var uppgift = document.getElementById("selectUppgift").value;
 		var kurskod = getKurskod();
   		console.log(kurskod, uppgift);
-		modifyCanvas(kurskod, uppgift);
+		renderStudents(kurskod, uppgift);
 	};
 
 	function modifyModul(kurskod) {
@@ -145,7 +186,16 @@
 	    });
 	}
 
-	function modifyCanvas(kurskod, uppgift) {
+	function renderTable(){
+		var table = "";
+		table = "<div class='table'><div class='thead'><div class='tr'><div class='td'>Namn</div><div class='td'>Omdöme i Canvas</div><div class='td'>Betyg i Ladok</div><div class='td'>Examinationsdatum</div><div class='td'>Status</div><div class='td'>Information</div><div class='td'></div></div></div>";
+		table += "<div class='tbody' id='data'>";
+		table += "</div></div>";
+		return table;
+	}
+
+	function renderStudents(kurskod, uppgift){
+		document.getElementById('container').innerHTML = renderTable();
 		console.log(kurskod, uppgift);
 		var alreadyUsed = [];
 		$.ajax({
@@ -153,123 +203,112 @@
 	        url: url + "list/" + kurskod + "/" + uppgift,
 	        dataType: "json",
 	        success: function(response) {
-	            var tdNamn = '';
-				var tdGrade = '';
-				var tdBetyg = '';
-				var tdDatum = '';
-				var tdStatus = '';
-				var tdInfo = '';
-				var tdKnapp = '';
+				
+				var rowForm = '';
+				var i = 0
 					$.each(response, function(key, canvas) {
-						
-							tdNamn +=  "<tr><td>" + canvas.namn + "</td></tr>";
-							tdGrade +=  "<tr><td>" + canvas.grade + "</td></tr>";
-							tdBetyg +=  "<tr><td><select><option>" + canvas.grade + "</option></select></td></tr>";
-							tdDatum +=  "<tr><td><input type='date'></input></td></tr>";
-							tdStatus +=  "<tr><td></td></tr>";
-							tdInfo +=  "<tr><td></td></tr>";
-							tdKnapp += 	"<tr><td><button type='button' onclick='postLadok()'>Submit</button></td></tr>";	
+
+
+							
+							
+							i += 1
+							console.log(i)
+							rowForm += "<form class='tr' name='testName'>"
+							rowForm += "<div class='td' value='"+ canvas.studentid + "' id='oPerson_nr" + i + "'>" + canvas.namn + "</div>"
+							rowForm += "<div class='td' id='oKurskod'>" + canvas.grade + "</div>"
+							rowForm += "<div class='td' id='oBetyg'><select id='betygSelect" + i + "'><option>" + canvas.grade + "</option></select></div>"
+							rowForm += "<div class='td' ><input type='date' id='oDatum" + i + "' ></input>" +  "</div>"
+							rowForm += "<div class='td' id='oStatus'><select id='statusSelect" + i + "'><option value='' selected disabled hidden>-</option><option>Utkast</option><option>Klarmarkerad</option><option>Attesterad</option><option>Hinder</option></select>" +  "</div>"
+							rowForm += "<div class='td' id='oModul_kod'>" + "-" +  "</div>"	
+							rowForm += "<div class='td action'><button type='button' onclick='getPerson_nr("+i+")'>send it</button>" +  "</div>"	
+							rowForm += "</form>"
+
 	                	
 	            });
-	            $("#canvasNamnTableContainer").html(tdNamn);
-				$("#canvasGradeTableContainer").html(tdGrade);
-				$("#canvasBetygTableContainer").html(tdBetyg);
-				$("#canvasDatumTableContainer").html(tdDatum);
-				$("#canvasStatusTableContainer").html(tdStatus);
-				$("#canvasInfoTableContainer").html(tdInfo);
-				$("#canvasKnappTableContainer").html(tdKnapp);
+				document.getElementById('data').innerHTML = rowForm;
 	        }
 	    });
-	};
-
-
-
-
-	function deleteCanvas(id) {
-	    //alert(id);
-	    $.ajax({
-	        type: "DELETE",
-	        url: url + id,
-	        dataType: "text",
-	        success: function(response) {
-	            $("#success_id").show().fadeOut(5000);
-	            canvasList();
-	        },
-	        error: function(jqXHR, textStatus, errorThrown) {
-	            $("#error_id").show().fadeOut(5000);
-	            console.log(textStatus, errorThrown);
-	        }
-	    })
 	}
 
-	function editCanvas(id) {
-	    $.ajax({
+	function getPerson_nr(i){
+		var i = i;
+		var studentid = document.getElementById("oPerson_nr" + i).getAttribute("value");
+		console.log("bu");
+		var person_nr = '';
+		$.ajax({
 	        type: "GET",
-	        url: url + id,
+	        url: url3 + studentid,
 	        dataType: "json",
 	        success: function(response) {
-	            $("#idInput").html("<input id='id' name='id' type='hidden' class='form-control input-md' value=" + response.id + ">")
-	            $("#namn").val(response.namn);
-	            $("#grade").val(response.grade);
-	            $("#kurskod").val(response.kurskod);
-	            canvasList();
-	        },
-	        error: function(jqXHR, textStatus, errorThrown) {
-	            console.log(textStatus, errorThrown);
+				
+				
+				console.log(studentid);
+				console.log("personnummer");
+				console.log("hej");
+				console.log("personnummer");
+				console.log("då");
+	            
+					$.each(response, function(key, its) {
+						console.log("ga");
+						person_nr = its.person_nr
+						console.log(person_nr);
+						console.log("personnummer");
+	                	
+	            });
+
+	            postRowLadok(i, person_nr);
 	        }
-	    })
+	    });
+
 	}
+
+	function postRowLadok(i, person_nr){
+		var i = i;
+		var person_nr = person_nr;
+		var oPerson_nr = person_nr;
+		console.log("här");
+		console.log(oPerson_nr);
+		var oKurskod = getKurskod();
+		console.log(oKurskod);
+		var oModul_kod = getModul_kod();
+		console.log(oModul_kod);
+		var oDatum = document.getElementById("oDatum" + i).value;
+		console.log(oDatum);
+		var oBetyg = document.getElementById("betygSelect" + i).value;
+		console.log(oBetyg);
+		var oStatus = document.getElementById("statusSelect" + i).value;
+		console.log(oStatus);
+		$.ajax({
+	            type: "POST",
+	            url: url2,
+	            data: JSON.stringify({person_nr: oPerson_nr, kurskod: oKurskod, modul_kod: oModul_kod, datum: oDatum, betyg: oBetyg, status: oStatus}),
+				contentType: "application/json; charset=utf-8",
+				dataType: "json",
+	            success: function(response) {
+	                $("#success_id").show().fadeOut(5000);
+	                productList();
+	                $("input[type=text], textarea").val("");
+	            },
+	            error: function(jqXHR, textStatus, errorThrown) {
+	                console.log(textStatus, errorThrown);
+	                $("#error_id").show().fadeOut(5000);
+	            }
+	        });
+
+	}
+
+	
+
+
+
+
+	
 </script>
+
 </head>
 <body>
 
 	<div class="container">
-		
-		<!-- <form class="form-horizontal mx-auto" name="canvasForm" method="post">
-			<strong>Canvas Form </strong>
-			<div class="form-group" id="idInput"></div>
-			<div class="form-group">
-				<label class="col-md-4 control-label" for="namn">Namn</label>
-				<div class="col-md-4">
-					<input id="namn" name="namn" type="text" placeholder="Namn"
-						class="form-control input-md" required="required">
-
-				</div>
-			</div>
-
-			<div class="form-group">
-				<label class="col-md-4 control-label" for="grade">grade</label>
-				<div class="col-md-4">
-					<input id="grade" name="grade" type="text"
-						placeholder="grade" class="form-control input-md"
-						required="required">
-
-				</div>
-			</div>
-
-			<div class="form-group">
-				<label class="col-md-4 control-label" for="kurskod">Kurskod</label>
-				<div class="col-md-4">
-					<input id="kurskod" name="kurskod" type="text" placeholder="Kurskod"
-						class="form-control input-md" required="required">
-
-				</div>
-			</div>
-
-			<div class="form-group">
-				<label class="col-md-4 control-label" for=""></label>
-				<div class="col-md-4">
-					<button id="CanvasFormSubmit" type="button"
-						name="canvasFormSubmit" class="btn btn-success">Submit</button>
-				</div>
-			</div>
-		</form>
-		<div class="alert alert-success" id="success_id" style="display: none">
-			<strong>Success!</strong> Data saved Successfully.
-		</div>
-		<div class="alert alert-danger" id="error_id" style="display: none">
-			<strong>Danger!</strong> Something went wrong! Try again.
-		</div> -->
 		<h1>Rapportera endast betyg</h1>
 		<p>Tre urvalsfält visas: Kurskod, Uppgift i Canvas och Modul i Ladok. Välj enligt det du vill rapportera.</p>
 		<div class="row">
@@ -281,37 +320,14 @@
 					<td id="modulTableContainer"></td>
 				</tr> </table>
 		</div>
-		<form name="ladokPostLove">
-		<div class="row">
-			
-			<table class=table table-striped table-bordered cellspacing=0 width=100%>
-				<thead> <tr>
-					<th>Namn</th>
-					<th>Omdöme i Canvas</th>
-					<th>Betyg i Ladok</th>
-					<th>Examinationsdatum</th>
-					<th>Status</th>
-					<th>Information</th>
-				</tr> </thead>
-				<tr>
-					
-					<td id="canvasNamnTableContainer"></td>
-					<td id="canvasGradeTableContainer"></td>
-					<td id="canvasBetygTableContainer"></td>
-					<td id="canvasDatumTableContainer"></td>
-					<td id="canvasStatusTableContainer"></td>
-					<td id="canvasInfoTableContainer"></td>
-					<td id="canvasKnappTableContainer"></td>
-				
-				</tr> 
-		</table>
-	
-		</div>
-		<button type='button' >Submit</button>
-	</form>
-		<!-- <div class="row" id="kurskodTableContainer"></div>
-		<div class="row" id="uppgiftTableContainer"></div> -->
-		<!-- <div class="row" id="tableContainer"></div> -->
+		
+
+		
+		<div id='container'></div>
+
+		
+		
+
 	</div>
 </body>
 </html>

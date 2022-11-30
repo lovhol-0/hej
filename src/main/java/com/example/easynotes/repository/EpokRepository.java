@@ -6,6 +6,6 @@ import org.springframework.stereotype.Repository;
 
 
 @Repository
-public interface EpokRepository extends JpaRepository<Epok, String> {
+public interface EpokRepository extends JpaRepository<Epok, Long> {
 
 }
